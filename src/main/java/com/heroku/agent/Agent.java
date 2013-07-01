@@ -129,6 +129,13 @@ public class Agent {
         @Override
         public void run() {
             EnumMap<Attribute, Long> attributes = new EnumMap<Attribute, Long>(Attribute.class);
+            try {
+                //avoid race conditions if other agents are executing preMain methods
+                Thread.sleep(5000); 
+            } catch (InterruptedException e1) {
+                e1.printStackTrace(System.out);
+                throw new RuntimeException("InterruptedException while sleeping at startup");
+            }
             getMemoryUtilization(attributes);
             getThreadUtilization(attributes);
             if (userlog) {
